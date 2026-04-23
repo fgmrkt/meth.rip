@@ -6,61 +6,55 @@
 <title>meth.rip</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    body {
-        background: black;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-    }
+body {
+    background: black;
+    overflow: hidden;
+}
 
-    /* VIDEO BASIS */
+/* VIDEO */
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* 📱 MOBILE TWEAK */
+@media (max-width: 768px) {
     video {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        
-        min-width: 100%;
-        min-height: 100%;
+        width: auto;
+        height: 100vh;
 
+        /* 🔥 minder crop horizontaal */
         object-fit: cover;
-        z-index: -1;
+        object-position: center center;
+
+        /* kleine zoom-out maar NIET extreem */
+        transform: translate(-50%, -50%) scale(0.85);
     }
+}
 
-    /* 📱 MOBILE FIX (zoom out ~150%) */
-    @media (max-width: 768px) {
-        video {
-            width: 100%;
-            height: auto;
-
-            min-width: unset;
-            min-height: unset;
-
-            transform: translate(-50%, -50%) scale(0.67); /* ≈ 150% uitgezoomd */
-            object-fit: contain;
-            background: black;
-        }
-    }
-
-    /* CONTENT */
-    .content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        text-align: center;
-    }
-
-    h1 {
-        font-size: 3rem;
-        text-shadow: 0 0 20px rgba(0,0,0,0.8);
-    }
+/* CONTENT */
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 0 0 20px black;
+}
 </style>
 </head>
 
@@ -70,18 +64,16 @@
     <source src="meth.mp4" type="video/mp4">
 </video>
 
-<div class="content">
-    <h1>meth.rip</h1>
-</div>
+<div class="content">meth.rip</div>
 
 <script>
-    const video = document.getElementById("bg-video");
+const video = document.getElementById("bg-video");
 
-    // 🔊 Audio unlock (nodig voor telefoon)
-    document.addEventListener("click", () => {
-        video.muted = false;
-        video.play();
-    });
+/* 🔊 audio unlock */
+document.addEventListener("click", () => {
+    video.muted = false;
+    video.play();
+});
 </script>
 
 </body>
