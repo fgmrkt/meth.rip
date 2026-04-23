@@ -5,94 +5,127 @@
 <title>meth.rip</title>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background:black;
-  font-family:Arial;
-  overflow:hidden;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* video */
+body {
+  background: black;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* 🎥 VIDEO */
 video {
   position: fixed;
   top: 50%;
   left: 50%;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
   object-fit: cover;
   z-index: -2;
 }
 
-/* overlay */
+/* 📱 FIX MOBILE ZOOM */
+@media (max-width: 768px) {
+  video {
+    object-fit: contain;
+    background: black;
+  }
+}
+
+/* 🌑 OVERLAY */
 .overlay {
   position: fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-  z-index:-1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: -1;
 }
 
-/* klik scherm */
+/* 🚪 ENTER SCREEN */
 .start {
-  position:absolute;
-  width:100%;
-  height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:white;
-  font-size:30px;
-  cursor:pointer;
-  background:black;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  background: black;
+  z-index: 10;
+  transition: 0.5s;
 }
 
-/* card */
+/* 🧊 CARD */
 .card {
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  padding:40px;
-  border-radius:20px;
-  text-align:center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  
   backdrop-filter: blur(15px);
   background: rgba(0,0,0,0.4);
-  color:white;
-  width:300px;
-  display:none;
+  
+  color: white;
+  width: 300px;
+  
+  opacity: 0;
+  transition: 0.5s;
 }
 
+/* 🔥 TITLE */
+.card h1 {
+  margin-bottom: 20px;
+}
+
+/* 🔗 BUTTONS */
 .btn {
-  display:block;
-  margin:10px 0;
-  padding:12px;
-  border-radius:10px;
-  text-decoration:none;
-  color:white;
+  display: block;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 10px;
+  
+  text-decoration: none;
+  color: white;
+  
   background: rgba(255,255,255,0.1);
+  transition: 0.3s;
 }
 
+/* ✨ GLOW */
 .btn:hover {
   background: rgba(255,255,255,0.2);
-  box-shadow:0 0 15px white;
+  box-shadow: 0 0 15px rgba(255,255,255,0.6);
 }
 </style>
 </head>
 
 <body>
 
+<!-- 🚪 CLICK TO ENTER -->
 <div class="start" onclick="startSite()">CLICK TO ENTER</div>
 
-<video id="bgvid" loop>
+<!-- 🎥 VIDEO -->
+<video id="bgvid" loop playsinline>
   <source src="meth.mp4" type="video/mp4">
 </video>
 
 <div class="overlay"></div>
 
+<!-- 🧊 CONTENT -->
 <div class="card" id="card">
   <h1>meth.rip</h1>
+
   <a href="#" class="btn">Discord</a>
   <a href="#" class="btn">Telegram</a>
   <a href="#" class="btn">Twitter</a>
@@ -101,11 +134,17 @@ video {
 <script>
 function startSite() {
   const vid = document.getElementById("bgvid");
-  vid.play();
-  vid.muted = false;
 
-  document.querySelector(".start").style.display = "none";
-  document.getElementById("card").style.display = "block";
+  vid.muted = false;
+  vid.play();
+
+  document.querySelector(".start").style.opacity = "0";
+  setTimeout(() => {
+    document.querySelector(".start").style.display = "none";
+  }, 500);
+
+  const card = document.getElementById("card");
+  card.style.opacity = "1";
 }
 </script>
 
