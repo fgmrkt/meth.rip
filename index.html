@@ -5,19 +5,15 @@
 <title>meth.rip</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  background: black;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
+  background:black;
+  font-family:Arial;
+  overflow:hidden;
 }
 
-/* 🎥 VIDEO BACKGROUND */
+/* video */
 video {
   position: fixed;
   top: 50%;
@@ -29,77 +25,89 @@ video {
   z-index: -2;
 }
 
-/* 🔲 DARK OVERLAY */
+/* overlay */
 .overlay {
   position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: -1;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:-1;
 }
 
-/* 🧊 CENTER BOX */
+/* klik scherm */
+.start {
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-size:30px;
+  cursor:pointer;
+  background:black;
+}
+
+/* card */
 .card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  
-  padding: 40px;
-  border-radius: 20px;
-  text-align: center;
-  
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
   backdrop-filter: blur(15px);
   background: rgba(0,0,0,0.4);
-  
-  color: white;
-  width: 300px;
+  color:white;
+  width:300px;
+  display:none;
 }
 
-/* 🔥 TITLE */
-.card h1 {
-  margin-bottom: 20px;
-}
-
-/* 🔗 BUTTONS */
 .btn {
-  display: block;
-  margin: 10px 0;
-  padding: 12px;
-  border-radius: 10px;
-  
-  text-decoration: none;
-  color: white;
-  
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border-radius:10px;
+  text-decoration:none;
+  color:white;
   background: rgba(255,255,255,0.1);
-  transition: 0.3s;
 }
 
-/* ✨ HOVER GLOW */
 .btn:hover {
   background: rgba(255,255,255,0.2);
-  box-shadow: 0 0 15px rgba(255,255,255,0.4);
+  box-shadow:0 0 15px white;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎥 VIDEO -->
-<video autoplay muted loop playsinline>
+<div class="start" onclick="startSite()">CLICK TO ENTER</div>
+
+<video id="bgvid" loop>
   <source src="meth.mp4" type="video/mp4">
 </video>
 
 <div class="overlay"></div>
 
-<!-- 🧊 CONTENT -->
-<div class="card">
+<div class="card" id="card">
   <h1>meth.rip</h1>
-
   <a href="#" class="btn">Discord</a>
   <a href="#" class="btn">Telegram</a>
   <a href="#" class="btn">Twitter</a>
 </div>
+
+<script>
+function startSite() {
+  const vid = document.getElementById("bgvid");
+  vid.play();
+  vid.muted = false;
+
+  document.querySelector(".start").style.display = "none";
+  document.getElementById("card").style.display = "block";
+}
+</script>
 
 </body>
 </html>
