@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>meth.rip</title>
+<meta name="description" content="fgmrkt — every link in one place.">
+<meta name="theme-color" content="#06070a">
+
+<!-- Social embed preview (shows when you paste meth.rip in Discord etc.) -->
+<meta property="og:title" content="meth.rip">
+<meta property="og:description" content="fgmrkt — every link in one place.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Familjen+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+
+<style>
+/* ============================================================
+   meth.rip — single-file bio page
+   Everything you'd normally want to change lives in the CONFIG
+   and SOCIALS blocks at the bottom of this file.
+   ============================================================ */
+
+:root{
+  --ink:        #f4f6f8;
+  --ink-dim:    #9aa3ad;
+  --ink-faint:  #6b737d;
+  --ground:     #06070a;
+  --glass:      rgba(255,255,255,.045);
+  --glass-hi:   rgba(255,255,255,.075);
+  --line:       rgba(255,255,255,.09);
+  --line-hi:    rgba(255,255,255,.20);
+  --shadow:     0 28px 70px -24px rgba(0,0,0,.95);
+  --r:          16px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{min-height:100%}
+
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+:focus-visible{
+  outline:2px solid var(--line-hi);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* ---------- background stack ---------- */
+
+#ambient,
+#ytwrap,
+.scrim,
+.texture{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+#ambient{z-index:0}
+
+#ytwrap{z-index:1;overflow:hidden;opacity:0;transition:opacity 1.2s ease}
+#ytwrap.live{opacity:1}
+#ytwrap iframe{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:100vw;height:56.25vw;          /* 16:9 cover trick */
+  min-height:100vh;min-width:177.78vh;
+  border:0;
+  filter:grayscale(1) contrast(1.06) brightness(.52);
+}
+
+.scrim{
+  z-index:2;
+  background:
+    radial-gradient(120% 80% at 50% 42%, rgba(6,7,10,.18) 0%, rgba(6,7,10,.72) 62%, rgba(6,7,10,.94) 100%),
+    linear-gradient(180deg, rgba(6,7,10,.7) 0%, rgba(6,7,10,.25) 35%, rgba(6,7,10,.85) 100%);
+}
+
+/* fine halftone-ish texture over everything */
+.texture{
+  z-index:3;
+  background-image:radial-gradient(rgba(255,255,255,.055) .5px, transparent .5px);
+  background-size:3px 3px;
+  mix-blend-mode:overlay;
+  opacity:.55;
+}
+
+/* ---------- layout ---------- */
+
+.page{
+  position:relative;
+  z-index:4;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:26px;
+  padding-block:44px;
+  padding-inline:20px;
+  transition:filter .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);
+}
+body:not(.entered) .page{
+  filter:blur(7px) brightness(.6);
+  transform:scale(1.015);
+}
+
+.col{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;gap:26px}
+
+/* staggered entrance */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1)}
+body.entered .reveal{opacity:1;transform:none}
+body.entered .reveal:nth-child(1){transition-delay:.05s}
+body.entered .reveal:nth-child(2){transition-delay:.14s}
+body.entered .reveal:nth-child(3){transition-delay:.23s}
+body.entered .reveal:nth-child(4){transition-delay:.32s}
+body.entered .reveal:nth-child(5){transition-delay:.41s}
+
+/* ---------- meta row ---------- */
+
+.meta{
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:8px 14px;
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.04em;
+  color:var(--ink-faint);
+}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+.meta svg{width:13px;height:13px;opacity:.75}
+.meta .sep{width:1px;height:11px;background:var(--line);padding:0}
+.meta b{font-weight:500;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+[hidden]{display:none !important}
+
+/* ---------- identity ---------- */
+
+.identity{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+
+h1{
+  font-family:Syne,"Familjen Grotesk",sans-serif;
+  font-weight:800;
+  font-size:clamp(2.7rem,11vw,4.1rem);
+  line-height:.94;
+  letter-spacing:-.035em;
+  text-wrap:balance;
+  text-shadow:0 2px 40px rgba(0,0,0,.7);
+}
+
+.bio{
+  font-size:.95rem;
+  color:var(--ink-dim);
+  max-width:34ch;
+  text-wrap:balance;
+  line-height:1.5;
+}
+
+/* ---------- socials list ---------- */
+
+.links{
+  width:100%;
+  list-style:none;
+  background:var(--glass);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  backdrop-filter:blur(16px) saturate(1.1);
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.links li + li{border-top:1px solid var(--line)}
+
+.row{
+  position:relative;
+  width:100%;
+  display:grid;
+  grid-template-columns:22px 1fr auto 14px;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  text-align:left;
+  transition:background .22s ease, transform .22s cubic-bezier(.2,.7,.3,1);
+}
+/* brand colour is the only colour on the page — it appears on hover,
+   so the colour itself tells you which platform you're on */
+.row::before{
+  content:"";
+  position:absolute;inset:0 auto 0 0;
+  width:2px;
+  background:var(--c);
+  transform:scaleY(0);
+  transition:transform .24s cubic-bezier(.2,.7,.3,1);
+}
+.row:focus-visible{
+  background:color-mix(in srgb, var(--c) 11%, transparent);
+  transform:translateX(2px);
+}
+.row:focus-visible::before{transform:scaleY(1)}
+
+.row .ico{width:22px;height:22px;display:grid;place-items:center}
+.row .ico svg{width:19px;height:19px;fill:currentColor;color:var(--ink-dim);transition:color .22s ease}
+.row:focus-visible .ico svg{color:var(--c)}
+
+.row .name{font-weight:600;font-size:.95rem;letter-spacing:-.005em}
+
+.row .handle{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.76rem;
+  color:var(--ink-faint);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:15ch;
+  transition:color .22s ease;
+}
+.row:focus-visible .handle{color:var(--ink-dim)}
+
+.row .go{
+  width:14px;height:14px;
+  color:var(--ink-faint);
+  transition:color .22s ease, transform .24s cubic-bezier(.2,.7,.3,1);
+}
+.row:focus-visible .go{color:var(--c);transform:translateX(3px)}
+.row .go svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.row.copied .handle{color:var(--c)}
+
+/* hover states only where there's a real pointer — stops phones
+   leaving a row stuck in its hover colour after a tap */
+@media (hover:hover){
+  .row:hover{
+    background:color-mix(in srgb, var(--c) 11%, transparent);
+    transform:translateX(2px);
+  }
+  .row:hover::before{transform:scaleY(1)}
+  .row:hover .ico svg{color:var(--c)}
+  .row:hover .handle{color:var(--ink-dim)}
+  .row:hover .go{color:var(--c);transform:translateX(3px)}
+}
+
+/* ---------- player ---------- */
+
+.player{
+  width:100%;
+  background:var(--glass);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  backdrop-filter:blur(16px) saturate(1.1);
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);
+  box-shadow:var(--shadow);
+  padding:13px 15px 15px;
+  display:flex;flex-direction:column;gap:11px;
+}
+
+.now{display:flex;align-items:center;gap:12px;min-width:0}
+
+.art{
+  width:42px;height:42px;flex:none;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:linear-gradient(140deg,#1b1e24,#0b0d11);
+  position:relative;overflow:hidden;
+  display:grid;place-items:center;
+}
+.art .ph{width:16px;height:16px;fill:var(--ink-faint);opacity:.6}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease}
+.art img.ok{opacity:1}
+
+.now .txt{min-width:0;flex:1}
+.now .t1{
+  font-size:.85rem;font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.now .t2{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.72rem;color:var(--ink-faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-top:2px;
+}
+
+.ctrl{
+  width:32px;height:32px;flex:none;
+  display:grid;place-items:center;
+  border-radius:9px;
+  border:1px solid transparent;
+  color:var(--ink-dim);
+  transition:color .2s ease, background .2s ease, border-color .2s ease;
+}
+.ctrl:hover{color:var(--ink);background:var(--glass-hi);border-color:var(--line)}
+.ctrl svg{width:15px;height:15px;fill:currentColor}
+.ctrl[disabled]{opacity:.35;cursor:default}
+.ctrl[disabled]:hover{color:var(--ink-dim);background:none;border-color:transparent}
+
+.bar{display:flex;align-items:center;gap:11px}
+.time{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.7rem;color:var(--ink-faint);
+  font-variant-numeric:tabular-nums;
+  flex:none;
+}
+.track{
+  flex:1;height:16px;
+  display:flex;align-items:center;
+  cursor:pointer;
+  position:relative;
+}
+.track .rail{width:100%;height:3px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden}
+.track .fill{height:100%;width:0%;background:var(--ink);border-radius:2px;transition:width .25s linear}
+.track .knob{
+  position:absolute;top:50%;left:0;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--ink);
+  transform:translate(-50%,-50%) scale(0);
+  transition:transform .2s ease, left .25s linear;
+  box-shadow:0 0 10px rgba(255,255,255,.5);
+}
+.track:hover .knob{transform:translate(-50%,-50%) scale(1)}
+.track[aria-disabled="true"]{cursor:default}
+.track[aria-disabled="true"] .knob{display:none}
+
+.note{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.68rem;
+  color:var(--ink-faint);
+  text-align:center;
+  line-height:1.45;
+}
+.note[hidden]{display:none}
+
+/* ---------- enter gate ---------- */
+
+#gate{
+  position:fixed;inset:0;z-index:9;
+  display:grid;place-items:center;
+  gap:14px;
+  background:rgba(6,7,10,.4);
+  cursor:pointer;
+  transition:opacity .65s ease, visibility .65s;
+}
+#gate .inner{display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;padding:20px}
+#gate .word{
+  font-family:Syne,sans-serif;
+  font-weight:700;
+  font-size:.9rem;
+  letter-spacing:.5em;
+  text-indent:.5em;
+  text-transform:uppercase;
+  animation:pulse 2.6s ease-in-out infinite;
+}
+#gate .sub{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:.7rem;
+  color:var(--ink-faint);
+  letter-spacing:.06em;
+}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+body.entered #gate{opacity:0;visibility:hidden}
+
+/* ---------- responsive ---------- */
+
+@media (max-width:420px){
+  .row{grid-template-columns:20px 1fr auto 12px;gap:11px;padding:13px 13px}
+  .row .handle{max-width:11ch;font-size:.72rem}
+  .col{gap:22px}
+  .page{gap:22px;padding-inline:16px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="ambient" aria-hidden="true"></canvas>
+<div id="ytwrap" aria-hidden="true"><div id="yt"></div></div>
+<div class="scrim" aria-hidden="true"></div>
+<div class="texture" aria-hidden="true"></div>
+
+<main class="page">
+  <div class="col">
+
+    <div class="meta reveal">
+      <span id="views" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <b id="viewCount">—</b>
+      </span>
+      <span class="sep" id="metaSep" hidden></span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-5.8 7-11a7 7 0 1 0-14 0c0 5.2 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span id="status"></span>
+      </span>
+    </div>
+
+    <div class="identity reveal">
+      <h1 id="name"></h1>
+      <p class="bio" id="bio"></p>
+    </div>
+
+    <ul class="links reveal" id="links"></ul>
+
+    <section class="player reveal" aria-label="Background music">
+      <div class="now">
+        <div class="art">
+          <svg class="ph" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3.5 8.5 6v10.1A3.2 3.2 0 1 0 10 18.8V9.3l8.5-1.8v6.3A3.2 3.2 0 1 0 20 17V3.5Z"/></svg>
+          <img id="art" alt="">
+        </div>
+        <div class="txt">
+          <div class="t1" id="trackTitle"></div>
+          <div class="t2" id="trackSub"></div>
+        </div>
+        <button class="ctrl" id="muteBtn" title="Mute" aria-label="Mute" disabled>
+          <svg id="muteIcon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/></svg>
+        </button>
+      </div>
+      <div class="bar">
+        <span class="time" id="tNow">0:00</span>
+        <div class="track" id="track" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-disabled="true" tabindex="0">
+          <div class="rail"><div class="fill" id="fill"></div></div>
+          <div class="knob" id="knob"></div>
+        </div>
+        <span class="time" id="tEnd">0:00</span>
+        <button class="ctrl" id="playBtn" title="Play" aria-label="Play" disabled>
+          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+      <p class="note" id="note" hidden></p>
+    </section>
+
+  </div>
+</main>
+
+<div id="gate" role="button" tabindex="0" aria-label="Enter site">
+  <div class="inner">
+    <div class="word">enter</div>
+    <div class="sub">click anywhere — sound on</div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   1. CONFIG  —  edit this block, that's the whole site
+   ════════════════════════════════════════════════════════════ */
+
+const CONFIG = {
+  name:        "fgmrkt",
+  bio:         "everything, one place.",
+  status:      "The Complex",
+
+  // Background video. Any YouTube ID works — it's the bit after "v=".
+  youtubeId:   "3jqt7MxifiU",
+  trackTitle:  "Breaking Bad 「Edit」",
+  trackSub:    "Money Trees · Jemartob",
+
+  // Live view counter. Free, no signup. Set to "" to hide the counter.
+  counterKey:  "meth-rip",
+};
+
+const SOCIALS = [
+  { name:"TikTok",    handle:"@atlas",             url:"https://www.tiktok.com/@atlas",                                    color:"#25F4EE", icon:"tiktok"    },
+  { name:"Instagram", handle:"@fgmrkt",            url:"https://instagram.com/fgmrkt",                                     color:"#E1306C", icon:"instagram" },
+  { name:"Discord",   handle:"fg64",               copy:"fg64",                                                            color:"#5865F2", icon:"discord"   },
+  { name:"X",         handle:"@676767",            url:"https://x.com/676767",                                             color:"#E7E9EA", icon:"x"         },
+  { name:"Medal",     handle:"snorlax",            url:"https://medal.tv/u/snorlax",                                       color:"#FFC53D", icon:"medal"     },
+  { name:"Steam",     handle:"76561199612436579",  url:"https://steamcommunity.com/profiles/76561199612436579/",           color:"#66C0F4", icon:"steam"     },
+  { name:"FACEIT",    handle:"flixpeek",           url:"https://www.faceit.com/en/players/flixpeek",                       color:"#FF5500", icon:"faceit"    },
+];
+
+/* ════════════════════════════════════════════════════════════
+   2. Icons
+   ════════════════════════════════════════════════════════════ */
+
+const ICONS = {
+  tiktok:   '<svg viewBox="0 0 24 24"><path d="M17.2 2h-2.9v13.1a2.6 2.6 0 1 1-2.2-2.6v-2.9a5.5 5.5 0 1 0 5.1 5.5V8.9a6.6 6.6 0 0 0 3.7 1.2V7.2a3.8 3.8 0 0 1-3.7-3.8V2Z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.67.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.4-.8.67-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.4.8-.67 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.07-1.1.05-1.7.24-2.1.4-.5.2-.9.44-1.3.84-.4.4-.64.8-.84 1.3-.16.4-.35 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 2.1.06 3.3c.05 1.1.24 1.7.4 2.1.2.5.44.9.84 1.3.4.4.8.64 1.3.84.4.16 1 .35 2.1.4 1.2.06 1.6.06 4.7.06s3.5 0 4.7-.06c1.1-.05 1.7-.24 2.1-.4.5-.2.9-.44 1.3-.84.4-.4.64-.8.84-1.3.16-.4.35-1 .4-2.1.06-1.2.06-1.6.06-3.3s0-2.1-.06-3.3c-.05-1.1-.24-1.7-.4-2.1-.2-.5-.44-.9-.84-1.3-.4-.4-.8-.64-1.3-.84-.4-.16-1-.35-2.1-.4C15.5 4 15.1 4 12 4Zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Zm5.2-3.1a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg>',
+  discord:  '<svg viewBox="0 0 24 24"><path d="M19.3 5.4A16 16 0 0 0 15.4 4.2l-.2.4a12 12 0 0 0-6.4 0l-.2-.4A16 16 0 0 0 4.7 5.4C2.2 9.1 1.5 12.7 1.9 16.2a16 16 0 0 0 4.8 2.4l.9-1.5a10 10 0 0 1-1.5-.7l.4-.3a11.4 11.4 0 0 0 9.8 0l.4.3a10 10 0 0 1-1.5.7l.9 1.5a16 16 0 0 0 4.8-2.4c.5-4-.6-7.6-2.6-10.8ZM8.6 14.2c-.9 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.7 2-1.7 2Zm6.8 0c-.9 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.7 2-1.7 2Z"/></svg>',
+  x:        '<svg viewBox="0 0 24 24"><path d="M17.6 3h3.2l-7 8 8.2 10h-6.4l-5-6.1L4.8 21H1.6l7.5-8.6L1.3 3h6.6l4.5 5.6L17.6 3Zm-1.1 16.1h1.8L7.6 4.8H5.7l10.8 14.3Z"/></svg>',
+  medal:    '<svg viewBox="0 0 24 24"><path d="M7.3 2h3.1l3 5.1-1.6 2.7L7.3 2Zm6.3 0h3.1l-6.6 11.3-1.6-2.7L13.6 2ZM12 11.6a5.7 5.7 0 1 1 0 11.4 5.7 5.7 0 0 1 0-11.4Zm0 2a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z"/></svg>',
+  steam:    '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-10 9.6l5.4 2.2a2.8 2.8 0 0 1 1.6-.5h.2l2.4-3.4v-.1a3.8 3.8 0 1 1 3.8 3.8h-.1l-3.4 2.4v.2a2.8 2.8 0 0 1-5.6.2l-3.8-1.6A10 10 0 1 0 12 2Zm-3.2 15.2 1.2.5a2.1 2.1 0 1 0 1.2-2.8l1.3.5a1.6 1.6 0 1 1-1.2 2.9l-2.5-1.1Zm6.6-4.9a2.5 2.5 0 1 0 0-5.1 2.5 2.5 0 0 0 0 5.1Zm0-.8a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5Z"/></svg>',
+  faceit:   '<svg viewBox="0 0 24 24"><path d="M21.3 4.2c0-.3-.4-.4-.5-.1L15.4 13H3.2c-.3 0-.4.4-.1.5l18 6.4c.2.1.3 0 .3-.2V4.2Z"/></svg>',
+  go:       '<svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>',
+  copy:     '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
+};
+
+/* ════════════════════════════════════════════════════════════
+   3. Build the page
+   ════════════════════════════════════════════════════════════ */
+
+const $ = (id) => document.getElementById(id);
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+$("name").textContent       = CONFIG.name;
+$("bio").textContent        = CONFIG.bio;
+$("status").textContent     = CONFIG.status;
+$("trackTitle").textContent = CONFIG.trackTitle;
+$("trackSub").textContent   = CONFIG.trackSub;
+document.title              = CONFIG.name === "fgmrkt" ? "meth.rip" : CONFIG.name;
+
+// --- socials list ---
+const list = $("links");
+for (const s of SOCIALS) {
+  const li = document.createElement("li");
+  const el = document.createElement(s.url ? "a" : "button");
+
+  if (s.url) {
+    el.href = s.url;
+    el.target = "_blank";
+    el.rel = "noopener noreferrer";
+  } else {
+    el.type = "button";
+  }
+
+  el.className = "row";
+  el.style.setProperty("--c", s.color);
+  el.innerHTML =
+    '<span class="ico">' + ICONS[s.icon] + '</span>' +
+    '<span class="name"></span>' +
+    '<span class="handle"></span>' +
+    '<span class="go">' + (s.url ? ICONS.go : ICONS.copy) + '</span>';
+  el.querySelector(".name").textContent = s.name;
+  el.querySelector(".handle").textContent = s.handle;
+  el.setAttribute("aria-label", s.url ? s.name + " — " + s.handle : "Copy " + s.name + " username " + s.handle);
+
+  // Discord has no public profile URL from a username, so this copies it instead
+  if (s.copy) {
+    const handleEl = el.querySelector(".handle");
+    el.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(s.copy);
+      } catch {
+        const t = document.createElement("textarea");
+        t.value = s.copy; t.style.position = "fixed"; t.style.opacity = "0";
+        document.body.appendChild(t); t.select();
+        try { document.execCommand("copy"); } catch {}
+        t.remove();
+      }
+      el.classList.add("copied");
+      handleEl.textContent = "copied";
+      setTimeout(() => { el.classList.remove("copied"); handleEl.textContent = s.handle; }, 1400);
+    });
+  }
+
+  li.appendChild(el);
+  list.appendChild(li);
+}
+
+/* ════════════════════════════════════════════════════════════
+   4. Ambient backdrop — out-of-focus city lights.
+      Always running underneath; the video covers it once it loads,
+      so the page never sits on a flat black rectangle.
+   ════════════════════════════════════════════════════════════ */
+
+(function ambient(){
+  const c = $("ambient"), x = c.getContext("2d");
+  let w, h, dots = [];
+
+  function seed(){
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    w = c.width  = innerWidth  * dpr;
+    h = c.height = innerHeight * dpr;
+    c.style.width = innerWidth + "px";
+    c.style.height = innerHeight + "px";
+    const n = Math.round((innerWidth * innerHeight) / 16000);
+    dots = Array.from({length: Math.min(n, 130)}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: (Math.random() * 2.6 + .5) * dpr,
+      a: Math.random() * .5 + .08,
+      v: (Math.random() * .18 + .03) * dpr,
+      p: Math.random() * Math.PI * 2,
+    }));
+  }
+
+  function frame(t){
+    x.clearRect(0, 0, w, h);
+    const g = x.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, "#080a0e");
+    g.addColorStop(.55, "#111419");
+    g.addColorStop(1, "#05060a");
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+
+    for (const d of dots) {
+      const tw = .65 + .35 * Math.sin(t / 900 + d.p);
+      x.beginPath();
+      x.arc(d.x, d.y, d.r, 0, 6.283);
+      x.fillStyle = "rgba(255,255,255," + (d.a * tw).toFixed(3) + ")";
+      x.shadowBlur = d.r * 5;
+      x.shadowColor = "rgba(255,255,255,.5)";
+      x.fill();
+      d.y -= d.v;
+      if (d.y < -10) { d.y = h + 10; d.x = Math.random() * w; }
+    }
+    x.shadowBlur = 0;
+    if (!reduced) requestAnimationFrame(frame);
+  }
+
+  seed();
+  addEventListener("resize", seed, {passive:true});
+  requestAnimationFrame(frame);
+})();
+
+/* ════════════════════════════════════════════════════════════
+   5. YouTube background + player
+   ════════════════════════════════════════════════════════════ */
+
+let yt = null, ytReady = false, poll = null;
+
+const playBtn = $("playBtn"), muteBtn = $("muteBtn"),
+      fill = $("fill"), knob = $("knob"), track = $("track"),
+      tNow = $("tNow"), tEnd = $("tEnd");
+
+const ICON_PLAY  = '<path d="M8 5v14l11-7z"/>';
+const ICON_PAUSE = '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>';
+const ICON_VOL   = '<path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/>';
+const ICON_MUTE  = '<path d="M4 9v6h4l5 4V5L8 9H4Zm15.1 3 1.9-1.9-1.1-1.1-1.9 1.9-1.9-1.9-1.1 1.1 1.9 1.9-1.9 1.9 1.1 1.1 1.9-1.9 1.9 1.9 1.1-1.1L19.1 12Z"/>';
+
+const fmt = (s) => {
+  s = Math.max(0, Math.floor(s || 0));
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+};
+
+// Load the YouTube iframe API. If it can't load (offline, blocked, or a
+// preview sandbox), the ambient canvas stays and the player says so.
+(function loadYT(){
+  if (!CONFIG.youtubeId) return fallback("No video configured.");
+  const s = document.createElement("script");
+  s.src = "https://www.youtube.com/iframe_api";
+  s.onerror = () => fallback("Music plays on the live site.");
+  document.head.appendChild(s);
+  setTimeout(() => { if (!ytReady) fallback("Music plays on the live site."); }, 4000);
+
+  const img = $("art");
+  img.onload = () => img.classList.add("ok");
+  img.src = "https://i.ytimg.com/vi/" + CONFIG.youtubeId + "/mqdefault.jpg";
+})();
+
+function fallback(msg){
+  if (ytReady) return;
+  const n = $("note");
+  n.textContent = msg;
+  n.hidden = false;
+}
+
+window.onYouTubeIframeAPIReady = function(){
+  yt = new YT.Player("yt", {
+    videoId: CONFIG.youtubeId,
+    playerVars: {
+      autoplay:1, controls:0, disablekb:1, fs:0, modestbranding:1,
+      loop:1, playlist:CONFIG.youtubeId, playsinline:1, rel:0, iv_load_policy:3,
+    },
+    events: {
+      onReady: (e) => {
+        ytReady = true;
+        $("note").hidden = true;
+        e.target.mute();
+        e.target.playVideo();
+        $("ytwrap").classList.add("live");
+        playBtn.disabled = false;
+        muteBtn.disabled = false;
+        track.setAttribute("aria-disabled", "false");
+        tEnd.textContent = fmt(e.target.getDuration());
+        if (document.body.classList.contains("entered")) unmute();
+        poll = setInterval(tick, 250);
+      },
+      onStateChange: (e) => {
+        const playing = e.data === YT.PlayerState.PLAYING;
+        $("playIcon").innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+        playBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+        playBtn.title = playing ? "Pause" : "Play";
+        if (e.data === YT.PlayerState.ENDED) yt.playVideo();
+      },
+      onError: () => fallback("This video can't be embedded — try another ID."),
+    },
+  });
+};
+
+function tick(){
+  if (!ytReady || !yt.getDuration) return;
+  const d = yt.getDuration(), c = yt.getCurrentTime();
+  if (!d) return;
+  const pct = Math.min(100, (c / d) * 100);
+  fill.style.width = pct + "%";
+  knob.style.left = pct + "%";
+  tNow.textContent = fmt(c);
+  tEnd.textContent = fmt(d);
+  track.setAttribute("aria-valuenow", Math.round(pct));
+}
+
+function unmute(){
+  if (!ytReady) return;
+  yt.unMute();
+  yt.setVolume(60);
+  $("muteIcon").innerHTML = ICON_VOL;
+}
+
+playBtn.addEventListener("click", () => {
+  if (!ytReady) return;
+  yt.getPlayerState() === YT.PlayerState.PLAYING ? yt.pauseVideo() : yt.playVideo();
+});
+
+muteBtn.addEventListener("click", () => {
+  if (!ytReady) return;
+  const m = yt.isMuted();
+  m ? (yt.unMute(), yt.setVolume(60)) : yt.mute();
+  $("muteIcon").innerHTML = m ? ICON_VOL : ICON_MUTE;
+  muteBtn.title = m ? "Mute" : "Unmute";
+  muteBtn.setAttribute("aria-label", m ? "Mute" : "Unmute");
+});
+
+function seek(clientX){
+  if (!ytReady) return;
+  const r = track.getBoundingClientRect();
+  const p = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+  yt.seekTo(p * yt.getDuration(), true);
+  tick();
+}
+track.addEventListener("click", (e) => seek(e.clientX));
+track.addEventListener("keydown", (e) => {
+  if (!ytReady) return;
+  if (e.key === "ArrowRight") { yt.seekTo(yt.getCurrentTime() + 5, true); tick(); }
+  if (e.key === "ArrowLeft")  { yt.seekTo(yt.getCurrentTime() - 5, true); tick(); }
+});
+
+/* ════════════════════════════════════════════════════════════
+   6. Enter gate — browsers won't start audio without a click
+   ════════════════════════════════════════════════════════════ */
+
+function enter(){
+  if (document.body.classList.contains("entered")) return;
+  document.body.classList.add("entered");
+  unmute();
+}
+$("gate").addEventListener("click", enter);
+$("gate").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); enter(); }
+});
+
+/* ════════════════════════════════════════════════════════════
+   7. View counter (free, no signup — hides itself if it fails)
+   ════════════════════════════════════════════════════════════ */
+
+if (CONFIG.counterKey) {
+  fetch("https://api.counterapi.dev/v1/methrip/" + CONFIG.counterKey + "/up")
+    .then((r) => r.ok ? r.json() : Promise.reject())
+    .then((d) => {
+      const n = d && (d.count ?? d.value);
+      if (typeof n !== "number") return;
+      $("viewCount").textContent = n.toLocaleString();
+      $("views").hidden = false;
+      $("metaSep").hidden = false;
+    })
+    .catch(() => {});
+}
+</script>
+
+</body>
+</html>
