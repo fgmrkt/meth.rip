@@ -485,6 +485,11 @@ const CONFIG = {
 
   // Live view counter. Free, no signup. Set to "" to hide the counter.
   counterKey:  "meth-rip",
+
+  // Bezoekersmeldingen naar Discord. Vul hier je Cloudflare Worker-URL in.
+  // Dit is NIET je Discord-webhook — die hoort in de Worker, nooit hier,
+  // want alles in dit bestand is openbaar leesbaar. Leeg = uit.
+  pingUrl:     "https://sweet-art-4f08.flixmeowmeow.workers.dev",
 };
 
 const MEDAL_LOGO = "data:image/png;base64,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";
@@ -779,6 +784,25 @@ $("gate").addEventListener("keydown", (e) => {
 /* ════════════════════════════════════════════════════════════
    7. View counter (free, no signup — hides itself if it fails)
    ════════════════════════════════════════════════════════════ */
+
+/* Bezoekersmelding — één keer per sessie, zodat refreshen niet spamt.
+   De Worker haalt land/provider uit het edge-netwerk; hier gaat alleen
+   een sessie-id en de referrer naartoe. */
+if (CONFIG.pingUrl) {
+  try {
+    const KEY = "mr_session";
+    if (!sessionStorage.getItem(KEY)) {
+      const sess = "sess-" + Math.random().toString(36).slice(2, 12);
+      sessionStorage.setItem(KEY, sess);
+      fetch(CONFIG.pingUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session: sess, ref: document.referrer || "" }),
+        keepalive: true,
+      }).catch(() => {});
+    }
+  } catch {}
+}
 
 if (CONFIG.counterKey) {
   fetch("https://api.counterapi.dev/v1/methrip/" + CONFIG.counterKey + "/up")
